@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="${webCtx.contextPath}/servlet/favicon" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="${webCtx.contextPath}/auth/fido2/js/base64js.js"></script>
+    <script src="${webCtx.contextPath}/auth/fido2/js/base64url.js"></script>
+    <script src="${webCtx.contextPath}/auth/fido2/js/webauthn.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class'
@@ -12,6 +15,41 @@
     </script>
 </head>
 <body>
+<script>
+    function registerPasskey() {
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        const raw = JSON.stringify({
+            attestation: "direct",
+            displayName: "${userData.name}",
+            username: "${userData.uid}",
+            authenticatorSelection: {
+                requireResidentKey: true,
+                residentKey: "preferred",
+                userVerification: "preferred"
+            },
+            excludeCredentials: [],
+            timeout: 90000,
+            extensions: {
+                credProps: true
+            }
+        });
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        fetch("/jans-fido2/restv1/attestation/options", requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                console.log('Result: ' + result);
+
+            })
+            .catch(error => console.log('error', error));
+
+    }
+</script>
 <section class="bg-gray-100 dark:bg-gray-900">
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div class="flex flex-col items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
@@ -40,8 +78,8 @@
                 </p>
 
                 <div class="space-y-2">
-                    <button type="submit"
-                            name="loginBtn"
+                    <button type="button"
+                            onclick="registerPasskey()"
                             class="w-full text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         Add passkey
                     </button>

@@ -16,10 +16,10 @@ Repeat 3 times max
          authResult.uid = creds.username
          Log "@debug Call authResult response %" authResult
          When authResult.success is true
-            aux = Trigger io.jans.agama.passkey.list
+            userData = Call io.jans.agama.passkey.IdentityProcessor#accountFromUid authResult.uid
+            Log "@debug Call accountFromUid response %" userData
+            aux = Trigger io.jans.agama.passkey.list userData
 
-     userData = Call io.jans.agama.passkey.IdentityProcessor#accountFromUid creds.username
-     Log "@debug UserData %" userData
      loginForm.username = creds.username
      When userData is not null
           inum = userData.inum
