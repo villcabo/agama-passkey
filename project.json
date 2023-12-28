@@ -1,0 +1,11 @@
+{
+  "projectName": "agama-passkey",
+  "description": "Agama Passkey",
+  "type": "community",
+  "author": "Milton-Ch",
+  "version": "0.0.1",
+  "license": "apache-2.0",
+  "configs": {
+    "io.jans.agama.passkey.main": {}
+  }
+}

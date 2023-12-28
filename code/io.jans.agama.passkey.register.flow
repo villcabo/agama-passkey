@@ -1,0 +1,10 @@
+Flow io.jans.agama.passkey.register
+     Basepath ""
+Log "@debug --> Register flow started!"
+pr = RRF "passkey-register.ftlh"
+Log "@debug Register form response %" pr
+
+When pr.cancelBtn is ""
+    Finish false
+
+Finish true
