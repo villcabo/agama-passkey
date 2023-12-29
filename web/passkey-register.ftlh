@@ -41,12 +41,34 @@
             redirect: 'follow'
         };
         fetch("/jans-fido2/restv1/attestation/options", requestOptions)
-            .then(response => response.text())
+            .then(response => response.json())
             .then(result => {
-                console.log('Result: ' + result);
+                webauthn.createCredential(result)
+                    .then(data => {
+                        const dataObject = webauthn.responseToObject(data);
+                        const createCredentialJson = JSON.stringify(dataObject);
+                        console.log('Create credential response: ' + createCredentialJson);
+                        const requestResults = {
+                            method: 'POST',
+                            headers: myHeaders,
+                            body: createCredentialJson,
+                            redirect: 'follow'
+                        };
+                        fetch("/jans-fido2/restv1/attestation/result", requestResults)
+                            .then(response => response.json())
+                            .then(result => {
+                                console.log('Paso todo correcto: ' + JSON.stringify(result));
 
+                            })
+                            .catch(err => {
+                                console.error('Failed to result fido endpoint: ' + JSON.stringify(err));
+                            });
+                    })
+                    .catch(err => {
+                        console.error('Failed to webauthn create credential: ' + JSON.stringify(err));
+                    });
             })
-            .catch(error => console.log('error', error));
+            .catch(error => console.log('Failed to options fido endpoint', error));
 
     }
 </script>

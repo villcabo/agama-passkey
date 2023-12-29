@@ -7,6 +7,8 @@ obj = { userData: userData }
 pr = RRF "passkey-register.ftlh" obj
 Log "@debug Register form response %" pr
 
+When pr.success is true
+    ud = RRF "passkey-update-device.ftlh" obj
+
 When pr.cancelBtn is ""
     Finish false
-
