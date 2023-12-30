@@ -1,8 +1,8 @@
 Flow io.jans.agama.passkey.main
      Basepath ""
-Log "@debug --> Main flow started!"
+Log "@debug **=> Main flow started!"
 loginForm = { success: true }
-casaApi = Call io.jans.agama.passkey.CasaApi#new
+casaApi = Call io.jans.agama.passkey.EnrollmentHelper#new
 
 authService = Call io.jans.as.server.service.AuthenticationService#class
 cdiUtil = Call io.jans.service.cdi.util.CdiUtil#bean authService

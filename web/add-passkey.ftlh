@@ -48,6 +48,8 @@
                         const dataObject = webauthn.responseToObject(data);
                         const createCredentialJson = JSON.stringify(dataObject);
                         console.log('Create credential response: ' + createCredentialJson);
+                        // document.getElementById("tokenResponse").value = createCredentialJson;
+                        // document.forms[0].submit();
                         const requestResults = {
                             method: 'POST',
                             headers: myHeaders,
@@ -57,8 +59,8 @@
                         fetch("/jans-fido2/restv1/attestation/result", requestResults)
                             .then(response => response.json())
                             .then(result => {
-                                console.log('Paso todo correcto: ' + JSON.stringify(result));
-
+                                document.getElementById("attestationId").value = result.createdCredentials.id;
+                                document.forms[0].submit();
                             })
                             .catch(err => {
                                 console.error('Failed to result fido endpoint: ' + JSON.stringify(err));
@@ -69,7 +71,6 @@
                     });
             })
             .catch(error => console.log('Failed to options fido endpoint', error));
-
     }
 </script>
 <section class="bg-gray-100 dark:bg-gray-900">
@@ -98,6 +99,8 @@
                     Passkeys can be used for sign-in as a simple and secure alternative to your password and
                     two-factor credentials.
                 </p>
+
+                <input type="hidden" id="attestationId" name="attestationId">
 
                 <div class="space-y-2">
                     <button type="button"

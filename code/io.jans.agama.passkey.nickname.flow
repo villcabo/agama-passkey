@@ -1,0 +1,21 @@
+Flow io.jans.agama.passkey.nickname
+     Basepath ""
+     Inputs attestationId userData
+Log "@debug **=> Successful Registration flow started!, Inputs attestationId %, userData %" attestationId userData
+
+inum = userData.inum
+name = userData.name
+
+obj = { userData: userData }
+nicknameForm = RRF "nickname.ftlh" obj
+Log "@debug Nickname form response %" nicknameForm
+
+enroller = Call io.jans.agama.passkey.enroll.FidoEnroller#new
+nickNamed = Call enroller nameIt inum nicknameForm.nickname attestationId
+When nickNamed is false
+    Log "@debug Failed to set a nickname for % device" name
+    res = { success: false, message: "Nickname passkey failed to save" }
+    Finish res
+
+res = { success: true, message: "Nickname passkey saved" }
+Finish res

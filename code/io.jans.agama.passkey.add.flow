@@ -1,0 +1,15 @@
+Flow io.jans.agama.passkey.add
+     Basepath ""
+     Inputs userData
+Log "@debug **=> Add a passkey flow started!, Inputs userData %" userData
+
+obj = { userData: userData }
+addForm = RRF "add-passkey.ftlh" obj
+Log "@debug Add form response %" addForm
+
+When addForm.cancelBtn is ""
+    res = { success: false, message: "Cancel event" }
+    Finish res
+
+nicknameTrigger = Trigger io.jans.agama.passkey.nickname addForm.attestationId userData
+Log "@debug Nickname trigger response %" nicknameTrigger

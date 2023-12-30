@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
-public class CasaApi extends CasaWSBase {
+public class EnrollmentHelper extends CasaWSBase {
 
     private static final String SCOPE_CONFIG = SCOPE_PREFIX + "casa.config";
     private static final String SCOPE_2FA = SCOPE_PREFIX + "casa.2fa";
 
-    public CasaApi() throws IOException {
+    public EnrollmentHelper() throws IOException {
         super(true);
         setScope(SCOPE_CONFIG + " " + SCOPE_2FA);
     }

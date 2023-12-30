@@ -1,12 +1,14 @@
 Flow io.jans.agama.passkey.list
      Basepath ""
      Inputs userData
-Log "@debug --> List flow started!, Inputs userData %" userData
+Log "@debug **=> List flow started!, Inputs userData %" userData
 
 Repeat 100 times max
-    pl = RRF "passkey-list.ftlh"
-    Log "@debug List form response %" pl
-    When pl.addPasskeyBtn is ""
-        register = Trigger io.jans.agama.passkey.register userData
-        Log "@debug Register trigger response %" register
-Finish true
+    listForm = RRF "passkey-list.ftlh"
+    Log "@debug List passkey form response %" listForm
+    When listForm.addPasskeyBtn is ""
+        addTrigger = Trigger io.jans.agama.passkey.add userData
+        Log "@debug Add passkey trigger response %" addTrigger
+
+res = { success: true, message: "Done" }
+Finish res
