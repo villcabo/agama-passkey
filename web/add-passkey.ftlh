@@ -17,60 +17,18 @@
 <body>
 <script>
     function registerPasskey() {
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        const raw = JSON.stringify({
-            attestation: "direct",
-            displayName: "${userData.name}",
-            username: "${userData.uid}",
-            authenticatorSelection: {
-                requireResidentKey: true,
-                residentKey: "preferred",
-                userVerification: "preferred"
-            },
-            excludeCredentials: [],
-            timeout: 90000,
-            extensions: {
-                credProps: true
-            }
-        });
-        const requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-        fetch("/jans-fido2/restv1/attestation/options", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                webauthn.createCredential(result)
-                    .then(data => {
-                        const dataObject = webauthn.responseToObject(data);
-                        const createCredentialJson = JSON.stringify(dataObject);
-                        console.log('Create credential response: ' + createCredentialJson);
-                        // document.getElementById("tokenResponse").value = createCredentialJson;
-                        // document.forms[0].submit();
-                        const requestResults = {
-                            method: 'POST',
-                            headers: myHeaders,
-                            body: createCredentialJson,
-                            redirect: 'follow'
-                        };
-                        fetch("/jans-fido2/restv1/attestation/result", requestResults)
-                            .then(response => response.json())
-                            .then(result => {
-                                document.getElementById("attestationId").value = result.createdCredentials.id;
-                                document.forms[0].submit();
-                            })
-                            .catch(err => {
-                                console.error('Failed to result fido endpoint: ' + JSON.stringify(err));
-                            });
-                    })
-                    .catch(err => {
-                        console.error('Failed to webauthn create credential: ' + JSON.stringify(err));
-                    });
+        const request = ${attestation?no_esc}
+        webauthn.createCredential(request)
+            .then(data => {
+                const dataObject = webauthn.responseToObject(data);
+                const createCredentialJson = JSON.stringify(dataObject);
+                console.log('Create credential response: ' + createCredentialJson);
+                document.getElementById("tokenResponse").value = createCredentialJson;
+                document.forms[0].submit();
             })
-            .catch(error => console.log('Failed to options fido endpoint', error));
+            .catch(err => {
+                console.error('Failed to webauthn create credential: ' + JSON.stringify(err));
+            });
     }
 </script>
 <section class="bg-gray-100 dark:bg-gray-900">
@@ -100,7 +58,7 @@
                     two-factor credentials.
                 </p>
 
-                <input type="hidden" id="attestationId" name="attestationId">
+                <input type="hidden" id="tokenResponse" name="tokenResponse">
 
                 <div class="space-y-2">
                     <button type="button"

@@ -21,8 +21,7 @@ public class FidoEnroller extends CasaWSBase {
 
     public String getAttestationMessage(String id) throws IOException {
         try {
-            HTTPRequest request = new HTTPRequest(HTTPRequest.Method.GET,
-                    new URL(getApiBase() + "/enrollment/fido2/attestation"));
+            HTTPRequest request = new HTTPRequest(HTTPRequest.Method.GET, new URL(getApiBase() + "/enrollment/fido2/attestation"));
 
             StringJoiner joiner = new StringJoiner("&");
             Map.of("userid", id, "platformAuthn", "false").forEach((k, v) -> joiner.add(k + "=" + encode(v)));
@@ -51,7 +50,7 @@ public class FidoEnroller extends CasaWSBase {
             request.setQuery(tokenResponse);
 
             logger.debug("Verifying registration");
-            HTTPResponse response = send    Request(request, false, true);
+            HTTPResponse response = sendRequest(request, false, true);
             int status = response.getStatusCode();
             Map<String, Object> map = response.getContentAsJSONObject();
 

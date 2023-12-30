@@ -3,13 +3,23 @@ Flow io.jans.agama.passkey.add
      Inputs userData
 Log "@debug **=> Add a passkey flow started!, Inputs userData %" userData
 
-obj = { userData: userData }
+inum = userData.inum
+name = userData.name
+
+enroller = Call io.jans.agama.passkey.enroll.FidoEnroller#new
+detestable = Call enroller getAttestationMessage inum
+
+obj = { attestation: detestable }
 addForm = RRF "add-passkey.ftlh" obj
 Log "@debug Add form response %" addForm
+
+When obj.skipped is ""
+    Finish false
 
 When addForm.cancelBtn is ""
     res = { success: false, message: "Cancel event" }
     Finish res
 
-nicknameTrigger = Trigger io.jans.agama.passkey.nickname addForm.attestationId userData
+nicknameTrigger = Trigger io.jans.agama.passkey.nickname addForm.tokenResponse userData
 Log "@debug Nickname trigger response %" nicknameTrigger
+Finish nicknameTrigger
