@@ -50,4 +50,14 @@ public class MFAUserInfo {
     public void setPreference(String preference) {
         this.preference = preference;
     }
+
+    @Override
+    public String toString() {
+        return "MFAUserInfo{" +
+                "enrolledMethods=" + enrolledMethods +
+                ", count=" + count +
+                ", turnedOn=" + turnedOn +
+                ", preference='" + preference + '\'' +
+                '}';
+    }
 }
