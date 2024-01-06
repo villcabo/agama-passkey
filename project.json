@@ -6,6 +6,9 @@
   "version": "0.0.1",
   "license": "apache-2.0",
   "configs": {
-    "io.jans.agama.passkey.main": {}
+    "io.jans.agama.passkey.main": {
+      "scimClientId": "<YOUR_SCIM_CLIENT_ID>",
+      "scimClientSecret": "<YOUR_SCIM_CLIENT_SECRET>"
+    }
   }
 }

@@ -17,11 +17,6 @@
 <body>
 <script>
     function setError(title, message) {
-        // const messageDiv = document.getElementById("alert-message");
-        // messageDiv.style.display = 'block';
-        // messageDiv.children[0].children[2].textContent = title;
-        // messageDiv.children[1].textContent = description;
-
         document.getElementById('errorTitle').value = title;
         document.getElementById('errorMessage').value = message;
         document.getElementById("form2").submit();

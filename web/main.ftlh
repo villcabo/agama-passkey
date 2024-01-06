@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="${webCtx.contextPath}/servlet/favicon" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="base64js.js"></script>
+    <script src="base64url.js"></script>
+    <script src="webauthn.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class'
@@ -12,6 +15,32 @@
     </script>
 </head>
 <body>
+<script>
+    function authenticationWithPasskey() {
+        const request = ${assertion?no_esc}
+        webauthn.getAssertion(request)
+            .then(data => {
+                const dataObject = webauthn.responseToObject(data);
+                const assertionJson = JSON.stringify(dataObject);
+                console.log('Assertion response: ' + assertionJson);
+                document.getElementById("tokenResponse").value = assertionJson;
+                document.getElementById("loginForm").submit();
+            })
+            .catch(err => {
+                console.error('Failed on credentials.get: ', err);
+                document.getElementById("cancelAction").value = "cancelled";
+                document.getElementById("loginForm").submit();
+            });
+    }
+
+    window.addEventListener("load", (event) => {
+        const isAssertion = ${isAssertion?c};
+        console.info('Passkey list loaded!, isAssertion: ' + isAssertion);
+        if (isAssertion) {
+            authenticationWithPasskey();
+        }
+    });
+</script>
 <section class="bg-gray-100 dark:bg-gray-900">
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
@@ -20,7 +49,8 @@
                  alt="logo">
         </div>
         <div class="w-full bg-white rounded-lg shadow-lg dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-            <form method="post" enctype="application/x-www-form-urlencoded" class="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <form id="loginForm" method="post" enctype="application/x-www-form-urlencoded"
+                  class="p-6 space-y-4 md:space-y-6 sm:p-8">
                 <h1 class="text-xl text-center font-medium text-gray-900 md:text-2xl dark:text-white">
                     Agama Passkey
                 </h1>
@@ -60,6 +90,9 @@
                         </span>
                     </div>
                 </div>
+
+                <input type="hidden" id="tokenResponse" name="tokenResponse">
+                <input type="hidden" id="cancelAction" name="cancelAction">
 
                 <button type="submit" name="loginWithPasskeyBtn" formnovalidate
                         class="w-full text-black bg-gray-50 border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">

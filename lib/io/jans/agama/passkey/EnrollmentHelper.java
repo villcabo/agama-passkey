@@ -1,8 +1,7 @@
 package io.jans.agama.passkey;
 
-import com.nimbusds.oauth2.sdk.http.HTTPRequest;
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,14 +20,6 @@ public class EnrollmentHelper extends CasaWSBase {
         setScope(SCOPE_CONFIG + " " + SCOPE_2FA);
     }
 
-    /**
-     * This method consume api /v2/2fa/user-info/<personUid>
-     *
-     * @param personUid The person UID
-     * @param methods   List of methods (fido2, otp, super_gluu, etc.)
-     * @return {@link MFAUserInfo}
-     * @throws IOException When you cannot determine the number of enrolled credentials
-     */
     public MFAUserInfo getMFAUserInfo(String personUid, Set<String> methods) throws IOException {
         try {
             HTTPRequest request = new HTTPRequest(HTTPRequest.Method.GET, new URL(apiBase + "/v2/2fa/user-info/" + encode(personUid)));

@@ -1,27 +1,47 @@
 Flow io.jans.agama.passkey.main
      Basepath ""
+     Configs conf
 Log "@debug **=> Main flow started!"
-loginForm = { success: true }
-casaApi = Call io.jans.agama.passkey.EnrollmentHelper#new
 
+casaApi = Call io.jans.agama.passkey.EnrollmentHelper#new
 authService = Call io.jans.as.server.service.AuthenticationService#class
 cdiUtil = Call io.jans.service.cdi.util.CdiUtil#bean authService
 authResult = {}
+obj = { success: true, assertion: "{}", isAssertion: false }
 
-Repeat 3 times max
-     creds = RRF "main.ftlh" loginForm
-     Log "@debug Login form response %" creds
-     When creds.loginBtn is ""
-         authResult.success = Call cdiUtil authenticate creds.username creds.password
-         authResult.uid = creds.username
+Repeat 10 times max
+     mainForm = RRF "main.ftlh" obj
+     Log "@debug Main form response %" mainForm
+     When mainForm.loginBtn is ""
+         authResult.success = Call cdiUtil authenticate mainForm.username mainForm.password
+         authResult.uid = mainForm.username
          Log "@debug Call authResult response %" authResult
          When authResult.success is true
             userData = Call io.jans.agama.passkey.IdentityProcessor#accountFromUid authResult.uid
             Log "@debug Call accountFromUid response %" userData
             uid = userData.uid
-            aux = Trigger io.jans.agama.passkey.list userData
+            aux = Trigger io.jans.agama.passkey.list userData conf
             When aux.success is true
                 Finish uid
+
+     When mainForm.loginWithPasskeyBtn is ""
+        fidoValidator = Call io.jans.agama.passkey.authn.FidoValidator#new
+        assertionRequest = Call fidoValidator assertionRequest
+        obj.isAssertion = true
+        obj.assertion = assertionRequest
+        mainForm = RRF "main.ftlh" obj
+        Log "@debug Main form response %" mainForm
+        When mainForm.tokenResponse is not ""
+            verifyResponse | E = Call fidoValidator verify mainForm.tokenResponse
+            Log "@debug Verify response %" verifyResponse
+            When E is not null
+                Log "@debug Verify contains error %" E
+
+            Finish verifyResponse
+
+        When mainForm.cancelAction is not ""
+            obj.isAssertion = true
+            obj.assertion = "{}"
 
 it_sxdfm = { success: false, error: "Login attempt exceeded." }
 Finish it_sxdfm

@@ -27,13 +27,13 @@ public class FidoEnroller extends CasaWSBase {
             Map.of("userid", id, "platformAuthn", "false").forEach((k, v) -> joiner.add(k + "=" + encode(v)));
             request.setQuery(joiner.toString());
 
-            logger.debug("Generating an attestation message for {}", id);
+            log.debug("Generating an attestation message for {}", id);
             HTTPResponse response = sendRequest(request, false, true);
             String responseContent = response.getContent();
             int status = response.getStatusCode();
 
             if (status != 200) {
-                logger.error("Attestation response was: ({}) {}", status, responseContent);
+                log.error("Attestation response was: ({}) {}", status, responseContent);
                 throw new Exception(response.getContentAsJSONObject().get("code").toString());
             }
             return responseContent;
@@ -49,13 +49,13 @@ public class FidoEnroller extends CasaWSBase {
                     new URL(getApiBase() + "/enrollment/fido2/registration/" + encode(id)));
             request.setQuery(tokenResponse);
 
-            logger.debug("Verifying registration");
+            log.debug("Verifying registration");
             HTTPResponse response = sendRequest(request, false, true);
             int status = response.getStatusCode();
             Map<String, Object> map = response.getContentAsJSONObject();
 
             if (status != 201) {
-                logger.error("Verification response was: ({}) {}", status, response.getContent());
+                log.error("Verification response was: ({}) {}", status, response.getContent());
                 throw new Exception(map.get("code").toString());
             }
             return map.get("id").toString();
@@ -75,11 +75,11 @@ public class FidoEnroller extends CasaWSBase {
             request.setContentType(APPLICATION_JSON);
             request.setQuery(body);
 
-            logger.debug("Naming fido credential for {}", nickname);
+            log.debug("Naming fido credential for {}", nickname);
             HTTPResponse response = sendRequest(request, false, true);
             int status = response.getStatusCode();
 
-            logger.debug("Response was ({}): {}", status, response.getContent());
+            log.debug("Response was ({}): {}", status, response.getContent());
             return status == 200;
         } catch (Exception e) {
             throw new IOException("Failed to name fido credential", e);

@@ -1,21 +1,19 @@
 Flow io.jans.agama.passkey.list
      Basepath ""
-     Inputs userData
+     Inputs userData scimSetting
 Log "@debug **=> List passkey flow started!, Inputs userData %" userData
+
 inum = userData.inum
 uid = userData.uid
-
 obj = { count: 0, assertion: "{}", isAssertion: false, showError: false, errorTitle: "", errorMessage: "" }
 
-Repeat 20 times max
+Repeat 30 times max
     enrollmentHelper = Call io.jans.agama.passkey.EnrollmentHelper#new
     mfaInfo = Call enrollmentHelper getMFAUserInfoByFido2 inum
     Log "@debug Call getMFAUserInfoByFido2 response %" mfaInfo
     count = mfaInfo.count
     Log "@debug User % has % credentials enrolled" uid count
-
     obj.count = count
-    Log "@debug obj values %" obj
 
     listForm = RRF "passkey-list.ftlh" obj
     Log "@debug List passkey form response %" listForm
@@ -46,7 +44,6 @@ Repeat 20 times max
             Log "@debug obj values %" obj
 
         When listForm1.tokenResponse is not ""
-            Log "@debug Token Response %" listForm1.tokenResponse
             verifyResponse | E = Call fidoValidator verify listForm1.tokenResponse
             Log "@debug Verify response %" verifyResponse
             When E is null

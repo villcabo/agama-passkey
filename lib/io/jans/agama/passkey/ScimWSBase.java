@@ -3,10 +3,6 @@ package io.jans.agama.passkey;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 import com.nimbusds.oauth2.sdk.http.HTTPResponse;
-import io.jans.casa.conf.OIDCClientSettings;
-import io.jans.casa.model.ApplicationConfiguration;
-import io.jans.orm.PersistenceEntryManager;
-import io.jans.service.cdi.util.CdiUtil;
 import io.jans.util.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +16,14 @@ import java.util.StringJoiner;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class CasaWSBase {
+public class ScimWSBase {
 
-    public static final String SCOPE_PREFIX = "https://jans.io/";
+    public static final String SCOPE_PREFIX = "https://jans.io/scim";
 
     private static final int TOKEN_EXP_GAP = 2000;
 
     //making it static prevents a serialization error...
-    protected static final Logger log = LoggerFactory.getLogger(CasaWSBase.class);
+    protected static final Logger log = LoggerFactory.getLogger(ScimWSBase.class);
 
     private String basicAuthnHeader;
     private String serverBase;
@@ -36,29 +32,20 @@ public class CasaWSBase {
     private String scope;
     protected String apiBase;
 
-    public CasaWSBase() throws IOException {
-        this(false);
+    public ScimWSBase() throws IOException {
+        this(false, null);
     }
 
     //constructor added to prevent serialization error...
-    public CasaWSBase(boolean doHealthCheck) throws IOException {
-        OIDCClientSettings clSettings = null;
-        try {
-            PersistenceEntryManager entryManager = CdiUtil.bean(PersistenceEntryManager.class);
-            clSettings = entryManager.find(ApplicationConfiguration.class, "ou=casa,ou=configuration,o=jans").getSettings().getOidcSettings().getClient();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new IOException("Unable to retrieve Casa configuration. Is Casa installed?");
-        }
-
+    public ScimWSBase(boolean doHealthCheck, ScimSetting scimSetting) throws IOException {
         serverBase = NetworkUtils.urlBeforeContextPath();
-        apiBase = serverBase + "/jans-casa/rest";
+        apiBase = serverBase + "/jans-scim/restv1";
 
         if (doHealthCheck) {
-            ensureCasaAvailability();
+            ensureScimAvailability();
         }
 
-        String authz = clSettings.getClientId() + ":" + clSettings.getClientSecret();
+        String authz = scimSetting.getScimClientId() + ":" + scimSetting.getScimClientSecret();
         authz = new String(Base64.getEncoder().encode(authz.getBytes(UTF_8)), UTF_8);
         basicAuthnHeader = "Basic " + authz;
     }
@@ -67,12 +54,12 @@ public class CasaWSBase {
         this.scope = scope;
     }
 
+
     protected String getApiBase() {
         return apiBase;
     }
 
-    protected HTTPResponse sendRequest(HTTPRequest request, boolean checkOK, boolean withToken)
-            throws IOException, ParseException {
+    protected HTTPResponse sendRequest(HTTPRequest request, boolean checkOK, boolean withToken) throws IOException, ParseException {
         setTimeouts(request);
         if (withToken) {
             refreshToken();
@@ -90,14 +77,13 @@ public class CasaWSBase {
         return URLEncoder.encode(str, UTF_8);
     }
 
-    private void ensureCasaAvailability() throws IOException {
+    private void ensureScimAvailability() throws IOException {
         try {
-            HTTPRequest request = new HTTPRequest(HTTPRequest.Method.GET,
-                    new URL(serverBase + "/jans-casa/health-check"));
+            HTTPRequest request = new HTTPRequest(HTTPRequest.Method.GET, new URL(apiBase + "/sys/health-check"));
             sendRequest(request, true, false);
         } catch (Exception e) {
-            log.warn("Casa not installed or not running?");
-            throw new IOException("Casa health-check request did not succeed", e);
+            log.warn("SCIM not installed or not running?");
+            throw new IOException("SCIM health-check request did not succeed", e);
         }
     }
 

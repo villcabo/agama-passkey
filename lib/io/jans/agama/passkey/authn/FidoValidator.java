@@ -3,16 +3,13 @@ package io.jans.agama.passkey.authn;
 import io.jans.fido2.client.AssertionService;
 import io.jans.fido2.client.Fido2ClientFactory;
 import io.jans.util.NetworkUtils;
-
 import jakarta.ws.rs.core.Response;
+import net.minidev.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
-
-import net.minidev.json.JSONObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FidoValidator {
 
@@ -24,9 +21,7 @@ public class FidoValidator {
         logger.debug("Inspecting fido2 configuration discovery URL");
         String metadataUri = NetworkUtils.urlBeforeContextPath() + "/.well-known/fido2-configuration";
 
-        try (Response response = Fido2ClientFactory.instance()
-                .createMetaDataConfigurationService(metadataUri).getMetadataConfiguration()) {
-
+        try (Response response = Fido2ClientFactory.instance().createMetaDataConfigurationService(metadataUri).getMetadataConfiguration()) {
             metadataConfiguration = response.readEntity(String.class);
             int status = response.getStatus();
 
@@ -40,9 +35,14 @@ public class FidoValidator {
 
     public String assertionRequest(String uid) throws IOException {
         logger.debug("Building an assertion request for {}", uid);
-        //Using assertionService as a private class field gives serialization trouble...
+        // Using assertionService as a private class field gives serialization trouble...
         AssertionService assertionService = Fido2ClientFactory.instance().createAssertionService(metadataConfiguration);
-        String content = JSONObject.toJSONString(Map.of("username", uid));
+        String content;
+        if (uid == null) {
+            content = JSONObject.toJSONString(Map.of("timeout", 90000));
+        } else {
+            content = JSONObject.toJSONString(Map.of("timeout", 90000, "username", uid));
+        }
 
         try (Response response = assertionService.authenticate(content)) {
             content = response.readEntity(String.class);
@@ -57,18 +57,26 @@ public class FidoValidator {
         }
     }
 
-    public void verify(String tokenResponse) throws IOException {
+    public String verify(String tokenResponse) throws IOException {
         logger.debug("Verifying fido token response");
         AssertionService assertionService = Fido2ClientFactory.instance().createAssertionService(metadataConfiguration);
 
-        try (Response response = assertionService.verify(tokenResponse)) {
-            int status = response.getStatus();
-
-            if (status != Response.Status.OK.getStatusCode()) {
-                String msg = "Verification step failed (code: " + status + ")";
-                logger.error(msg + "; response was: " + response.readEntity(String.class));
-                throw new IOException(msg);
-            }
+        Response response = assertionService.verify(tokenResponse);
+        int status = response.getStatus();
+        if (status != Response.Status.OK.getStatusCode()) {
+            String msg = "Verification step failed (code: " + status + ")";
+            logger.error(msg);
+            throw new IOException(msg);
         }
+
+        String resString = response.readEntity(String.class);
+        org.json.JSONObject jsonNode = new org.json.JSONObject(resString);
+        logger.error("Status: {}, Response: {}", status, jsonNode);
+        if (jsonNode.has("username")) {
+            String user = jsonNode.getString("username");
+            logger.debug("User returned: {}", user);
+            return user;
+        }
+        return "";
     }
 }
