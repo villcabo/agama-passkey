@@ -21,4 +21,12 @@ public class ScimSetting {
     public void setScimClientSecret(String scimClientSecret) {
         this.scimClientSecret = scimClientSecret;
     }
+
+    @Override
+    public String toString() {
+        return "ScimSetting{" +
+                "scimClientId='" + scimClientId + '\'' +
+                ", scimClientSecret='" + scimClientSecret + '\'' +
+                '}';
+    }
 }

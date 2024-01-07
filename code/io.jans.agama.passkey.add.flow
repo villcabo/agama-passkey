@@ -5,21 +5,41 @@ Log "@debug **=> Add a passkey flow started!, Inputs userData %" userData
 
 inum = userData.inum
 name = userData.name
+fidoEnroller = Call io.jans.agama.passkey.enroll.FidoEnroller#new
+obj = { attestation: "{}", isAttestation: false, showError: false, errorTitle: "", errorMessage: "" }
 
-enroller = Call io.jans.agama.passkey.enroll.FidoEnroller#new
-detestable = Call enroller getAttestationMessage inum
+Repeat 50 times max
+    addDeviceForm = RRF "passkey-add.ftlh" obj
+    Log "@debug Add form response %" addDeviceForm
 
-obj = { attestation: detestable }
-addForm = RRF "add-passkey.ftlh" obj
-Log "@debug Add form response %" addForm
+    When addDeviceForm.addPasskeyBtn is ""
+        detestable = Call fidoEnroller getAttestationMessage inum
+        obj.isAttestation = true
+        obj.attestation = detestable
+        obj.showError = false
 
-When obj.skipped is ""
-    Finish false
+    When addDeviceForm.skipped is ""
+        obj.isAttestation = false
+        obj.showError = true
+        obj.errorTitle = "Passkey registration failed."
+        obj.errorMessage = ""
 
-When addForm.cancelBtn is ""
-    res = { success: false, message: "Cancel event" }
-    Finish res
+    When addDeviceForm.tokenResponse is ""
+        key | E = Call fidoEnroller verifyRegistration inum obj.tokenResponse
+        When E is not null
+            Log "@error FidoEnroller.verifyRegistration is crashed: %" E
+            obj.showError = true
+            obj.errorTitle = "Passkey registration failed."
+            obj.errorMessage = E
 
-nicknameTrigger = Trigger io.jans.agama.passkey.nickname addForm.tokenResponse userData
-Log "@debug Nickname trigger response %" nicknameTrigger
-Finish nicknameTrigger
+        Log "@debug FidoEnroller.verifyRegistration is success, key %" key
+        nicknameTrigger = Trigger io.jans.agama.passkey.nickname key userData
+        Log "@debug Nickname trigger response %" nicknameTrigger
+        Finish nicknameTrigger
+
+    When addDeviceForm.cancelBtn is ""
+        res = { success: false, message: "Cancel event" }
+        Finish res
+
+res = { success: false, error: "Passkey registration attempt exceeded." }
+Finish res

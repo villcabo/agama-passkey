@@ -1,7 +1,7 @@
 Flow io.jans.agama.passkey.nickname
      Basepath ""
-     Inputs tokenResponse userData
-Log "@debug **=> Nickname passkey flow started!, Inputs tokenResponse %, userData %" tokenResponse userData
+     Inputs key userData
+Log "@debug **=> Nickname passkey flow started!, Inputs key %, userData %" key userData
 
 inum = userData.inum
 name = userData.name
@@ -9,9 +9,6 @@ name = userData.name
 nicknameForm = RRF "nickname.ftlh"
 Log "@debug Nickname form response %" nicknameForm
 
-enroller = Call io.jans.agama.passkey.enroll.FidoEnroller#new
-key = Call enroller verifyRegistration inum tokenResponse
-Log "@debug ID of enrolled key is" key
 nickNamed = Call enroller nameIt inum nicknameForm.nickname key
 When nickNamed is false
     Log "@debug Failed to set a nickname for % device" name

@@ -27,15 +27,14 @@
                 document.getElementById("loginForm").submit();
             })
             .catch(err => {
-                console.error('Failed on credentials.get: ', err);
-                document.getElementById("cancelAction").value = "cancelled";
+                console.error('Failed to webauthn get credential: ', err);
+                document.getElementById("skipped").value = "skipped";
                 document.getElementById("loginForm").submit();
             });
     }
 
     window.addEventListener("load", (event) => {
         const isAssertion = ${isAssertion?c};
-        console.info('Passkey list loaded!, isAssertion: ' + isAssertion);
         if (isAssertion) {
             authenticationWithPasskey();
         }
@@ -92,7 +91,33 @@
                 </div>
 
                 <input type="hidden" id="tokenResponse" name="tokenResponse">
-                <input type="hidden" id="cancelAction" name="cancelAction">
+                <input type="hidden" id="skipped" name="skipped">
+
+                <#if showError == true >
+                    <div id="alert-message"
+                         class="p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
+                         role="alert">
+                        <div class="flex items-center">
+                            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16"
+                                 data-view-component="true" class="flex-shrink-0 w-4 h-4 me-2 fill-red-700">
+                                <path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+                            </svg>
+                            <span class="sr-only">Info</span>
+                            <h3 class="text-lg font-medium">${errorTitle}</h3>
+                        </div>
+                        <div class="mt-2 mb-4 text-sm">
+                            ${errorMessage}
+                        </div>
+                        <div class="flex">
+                            <button type="button"
+                                    onclick="document.getElementById('alert-message').style.display = 'none'"
+                                    class="text-red-800 bg-transparent border border-red-800 hover:bg-red-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:hover:bg-red-600 dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800"
+                                    aria-label="Close">
+                                Dismiss
+                            </button>
+                        </div>
+                    </div>
+                </#if>
 
                 <button type="submit" name="loginWithPasskeyBtn" formnovalidate
                         class="w-full text-black bg-gray-50 border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">

@@ -6,17 +6,19 @@ Log "@debug **=> Main flow started!"
 casaApi = Call io.jans.agama.passkey.EnrollmentHelper#new
 authService = Call io.jans.as.server.service.AuthenticationService#class
 cdiUtil = Call io.jans.service.cdi.util.CdiUtil#bean authService
+fidoValidator = Call io.jans.agama.passkey.authn.FidoValidator#new
 authResult = {}
-obj = { success: true, assertion: "{}", isAssertion: false }
+obj = { success: true, assertion: "{}", isAssertion: false, showError: false, errorTitle: "", errorMessage: "" }
 
-Repeat 10 times max
-     mainForm = RRF "main.ftlh" obj
-     Log "@debug Main form response %" mainForm
-     When mainForm.loginBtn is ""
-         authResult.success = Call cdiUtil authenticate mainForm.username mainForm.password
-         authResult.uid = mainForm.username
-         Log "@debug Call authResult response %" authResult
-         When authResult.success is true
+Repeat 50 times max
+    mainForm = RRF "main.ftlh" obj
+    Log "@debug Main form response %" mainForm
+
+    When mainForm.loginBtn is ""
+        authResult.success = Call cdiUtil authenticate mainForm.username mainForm.password
+        authResult.uid = mainForm.username
+        Log "@debug Call authResult response %" authResult
+        When authResult.success is true
             userData = Call io.jans.agama.passkey.IdentityProcessor#accountFromUid authResult.uid
             Log "@debug Call accountFromUid response %" userData
             uid = userData.uid
@@ -24,24 +26,27 @@ Repeat 10 times max
             When aux.success is true
                 Finish uid
 
-     When mainForm.loginWithPasskeyBtn is ""
-        fidoValidator = Call io.jans.agama.passkey.authn.FidoValidator#new
-        assertionRequest = Call fidoValidator assertionRequest
+    When mainForm.loginWithPasskeyBtn is ""
+        desAssertion = Call fidoValidator assertionRequest null
         obj.isAssertion = true
-        obj.assertion = assertionRequest
-        mainForm = RRF "main.ftlh" obj
-        Log "@debug Main form response %" mainForm
-        When mainForm.tokenResponse is not ""
-            verifyResponse | E = Call fidoValidator verify mainForm.tokenResponse
-            Log "@debug Verify response %" verifyResponse
-            When E is not null
-                Log "@debug Verify contains error %" E
+        obj.assertion = desAssertion
 
-            Finish verifyResponse
+    When mainForm.tokenResponse is not ""
+        verifyResponse | E = Call fidoValidator verify mainForm.tokenResponse
+        When E is not null
+            Log "@error FidoValidator.verify is crashed: %" E
+            obj.showError = true
+            obj.errorTitle = "Passkey authentication failed."
+            obj.errorMessage = E
 
-        When mainForm.cancelAction is not ""
-            obj.isAssertion = true
-            obj.assertion = "{}"
+        Log "@debug FidoValidator.verify is success %" verifyResponse
+        Finish verifyResponse
 
-it_sxdfm = { success: false, error: "Login attempt exceeded." }
-Finish it_sxdfm
+    When mainForm.skipped is "skipped"
+        obj.isAssertion = false
+        obj.showError = true
+        obj.errorTitle = "Passkey authentication failed."
+        obj.errorMessage = ""
+
+res = { success: false, error: "Login attempt exceeded." }
+Finish res

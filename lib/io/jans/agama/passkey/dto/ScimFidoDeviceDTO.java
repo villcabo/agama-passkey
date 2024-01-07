@@ -3,99 +3,87 @@ package io.jans.agama.passkey.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScimFidoDeviceDTO {
 
-    @JsonProperty("totalResults")
-    private Integer totalResults;
+    @JsonProperty("id")
+    private String id;
 
-    @JsonProperty("Resources")
-    private List<FidoDevice> items;
+    @JsonProperty("userId")
+    private String userId;
 
-    public Integer getTotalResults() {
-        return totalResults;
+    @JsonProperty("creationDate")
+    private String creationDate;
+
+    @JsonProperty("counter")
+    private Integer counter;
+
+    @JsonProperty("status")
+    private String status;
+
+    @JsonProperty("displayName")
+    private String displayName;
+
+    public ScimFidoDeviceDTO() {
     }
 
-    public void setTotalResults(Integer totalResults) {
-        this.totalResults = totalResults;
+    public String getId() {
+        return id;
     }
 
-    public List<FidoDevice> getItems() {
-        return items;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setItems(List<FidoDevice> items) {
-        this.items = items;
+    public String getUserId() {
+        return userId;
     }
 
-    public static class FidoDevice {
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-        @JsonProperty("id")
-        private String id;
+    public String getCreationDate() {
+        return creationDate;
+    }
 
-        @JsonProperty("userId")
-        private String userId;
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
 
-        @JsonProperty("creationDate")
-        private String creationDate;
+    public Integer getCounter() {
+        return counter;
+    }
 
-        @JsonProperty("counter")
-        private Integer counter;
+    public void setCounter(Integer counter) {
+        this.counter = counter;
+    }
 
-        @JsonProperty("status")
-        private String status;
+    public String getStatus() {
+        return status;
+    }
 
-        @JsonProperty("displayName")
-        private String displayName;
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-        public String getId() {
-            return id;
-        }
+    public String getDisplayName() {
+        return displayName;
+    }
 
-        public void setId(String id) {
-            this.id = id;
-        }
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
-        public String getCreationDate() {
-            return creationDate;
-        }
-
-        public void setCreationDate(String creationDate) {
-            this.creationDate = creationDate;
-        }
-
-        public Integer getCounter() {
-            return counter;
-        }
-
-        public void setCounter(Integer counter) {
-            this.counter = counter;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public void setDisplayName(String displayName) {
-            this.displayName = displayName;
-        }
+    @Override
+    public String toString() {
+        return "ScimFidoDeviceDTO{" +
+                "id='" + id + '\'' +
+                ", userId='" + userId + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", counter=" + counter +
+                ", status='" + status + '\'' +
+                ", displayName='" + displayName + '\'' +
+                '}';
     }
 }

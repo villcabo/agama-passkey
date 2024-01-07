@@ -45,9 +45,12 @@ public class ScimWSBase {
             ensureScimAvailability();
         }
 
-        String authz = scimSetting.getScimClientId() + ":" + scimSetting.getScimClientSecret();
-        authz = new String(Base64.getEncoder().encode(authz.getBytes(UTF_8)), UTF_8);
-        basicAuthnHeader = "Basic " + authz;
+        if (scimSetting != null) {
+            String authz = scimSetting.getScimClientId() + ":" + scimSetting.getScimClientSecret();
+            String authzEncoded = new String(Base64.getEncoder().encode(authz.getBytes(UTF_8)), UTF_8);
+            basicAuthnHeader = "Basic " + authzEncoded;
+            log.debug("Scim loaded successfully, basicAuthnHeader: {}, apiBase: {}", authz, apiBase);
+        }
     }
 
     protected void setScope(String scope) {
@@ -79,7 +82,9 @@ public class ScimWSBase {
 
     private void ensureScimAvailability() throws IOException {
         try {
-            HTTPRequest request = new HTTPRequest(HTTPRequest.Method.GET, new URL(apiBase + "/sys/health-check"));
+            URL url = new URL(serverBase + "/jans-scim/sys/health-check");
+            log.debug("Scim health-check url: {}", url);
+            HTTPRequest request = new HTTPRequest(HTTPRequest.Method.GET, url);
             sendRequest(request, true, false);
         } catch (Exception e) {
             log.warn("SCIM not installed or not running?");

@@ -9,113 +9,35 @@ import java.util.List;
 public class ScimFidoDeviceResponseDTO {
 
     @JsonProperty("totalResults")
-    private Integer totalResults;
+    private Integer count;
 
     @JsonProperty("Resources")
-    private List<FidoDevice> items;
+    private List<ScimFidoDeviceDTO> devices;
 
-    public Integer getTotalResults() {
-        return totalResults;
+    public ScimFidoDeviceResponseDTO() {
     }
 
-    public void setTotalResults(Integer totalResults) {
-        this.totalResults = totalResults;
+    public Integer getCount() {
+        return count;
     }
 
-    public List<FidoDevice> getItems() {
-        return items;
+    public void setCount(Integer count) {
+        this.count = count;
     }
 
-    public void setItems(List<FidoDevice> items) {
-        this.items = items;
+    public List<ScimFidoDeviceDTO> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(List<ScimFidoDeviceDTO> devices) {
+        this.devices = devices;
     }
 
     @Override
     public String toString() {
         return "ScimFidoDeviceDTO{" +
-                "totalResults=" + totalResults +
-                ", items=" + items +
+                "count=" + count +
+                ", devices=" + devices +
                 '}';
-    }
-
-    public static class FidoDevice {
-
-        @JsonProperty("id")
-        private String id;
-
-        @JsonProperty("userId")
-        private String userId;
-
-        @JsonProperty("creationDate")
-        private String creationDate;
-
-        @JsonProperty("counter")
-        private Integer counter;
-
-        @JsonProperty("status")
-        private String status;
-
-        @JsonProperty("displayName")
-        private String displayName;
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
-        public String getCreationDate() {
-            return creationDate;
-        }
-
-        public void setCreationDate(String creationDate) {
-            this.creationDate = creationDate;
-        }
-
-        public Integer getCounter() {
-            return counter;
-        }
-
-        public void setCounter(Integer counter) {
-            this.counter = counter;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public void setDisplayName(String displayName) {
-            this.displayName = displayName;
-        }
-
-        @Override
-        public String toString() {
-            return "FidoDevice{" +
-                    "id='" + id + '\'' +
-                    ", userId='" + userId + '\'' +
-                    ", creationDate='" + creationDate + '\'' +
-                    ", counter=" + counter +
-                    ", status='" + status + '\'' +
-                    ", displayName='" + displayName + '\'' +
-                    '}';
-        }
     }
 }

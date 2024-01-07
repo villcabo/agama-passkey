@@ -1,56 +1,53 @@
 Flow io.jans.agama.passkey.list
      Basepath ""
      Inputs userData scimSetting
-Log "@debug **=> List passkey flow started!, Inputs userData %" userData
+Log "@debug **=> List passkey flow started!, Inputs userData: %, scimSetting: %" userData scimSetting
 
 inum = userData.inum
 uid = userData.uid
-obj = { count: 0, assertion: "{}", isAssertion: false, showError: false, errorTitle: "", errorMessage: "" }
+fidoValidator = Call io.jans.agama.passkey.authn.FidoValidator#new
+scimFido2Helper = Call io.jans.agama.passkey.ScimFido2Helper#new scimSetting
+fidoDevices = Call scimFido2Helper getFidoDeviceByUser inum
+Log "@debug Call ScimFido2Helper.getFidoDeviceByUser response %" fidoDevices
+obj = { count: fidoDevices.count, devices: fidoDevices.devices, assertion: "{}", isAssertion: false, showError: false, errorTitle: "", errorMessage: "" }
 
-Repeat 30 times max
-    enrollmentHelper = Call io.jans.agama.passkey.EnrollmentHelper#new
-    mfaInfo = Call enrollmentHelper getMFAUserInfoByFido2 inum
-    Log "@debug Call getMFAUserInfoByFido2 response %" mfaInfo
-    count = mfaInfo.count
-    Log "@debug User % has % credentials enrolled" uid count
-    obj.count = count
-
+Repeat 50 times max
     listForm = RRF "passkey-list.ftlh" obj
     Log "@debug List passkey form response %" listForm
+
     When listForm.addAPasskeyBtn is ""
         addTrigger = Trigger io.jans.agama.passkey.add userData
         Log "@debug Add passkey trigger response %" addTrigger
         obj.showError = false
+        obj.isAssertion = false
+        When addTrigger.success is true
+            fidoDevices = Call scimFido2Helper getFidoDeviceByUser inum
+            obj.count = fidoDevices.count
+            obj.devices = fidoDevices.devices
 
     When listForm.loginWithPasskeyBtn is ""
-        fidoValidator = Call io.jans.agama.passkey.authn.FidoValidator#new
-        assertionRequest = Call fidoValidator assertionRequest uid
+        desAssertion = Call fidoValidator assertionRequest uid
         obj.showError = false
         obj.isAssertion = true
-        obj.assertion = assertionRequest
+        obj.assertion = desAssertion
 
-        listForm1 = RRF "passkey-list.ftlh" obj
-        Log "@debug List passkey form1 response %" listForm1
+    When listForm.skipped is ""
+        obj.isAssertion = false
+        obj.showError = true
+        obj.errorTitle = "Passkey authentication failed."
+        obj.errorMessage = ""
 
-        When listForm1.error is not ""
-            // Assertion false
-            obj.isAssertion = false
-            obj.assertion = "{}"
-            // Show Error
+    When listForm.tokenResponse is ""
+        verifyResponse | E = Call fidoValidator verify listForm.tokenResponse
+        When E is null
+            Log "@debug FidoValidator.verify is crashed: %" E
             obj.showError = true
-            obj.errorTitle = listForm1.errorTitle
-            obj.errorMessage = listForm1.errorMessage
+            obj.errorTitle = "Passkey authentication failed."
+            obj.errorMessage = E
 
-            Log "@debug obj values %" obj
+        Log "@debug FidoValidator.verify is success: %" verifyResponse
+        res = { success: true, message: "Passkey authentication success" }
+        Finish res
 
-        When listForm1.tokenResponse is not ""
-            verifyResponse | E = Call fidoValidator verify listForm1.tokenResponse
-            Log "@debug Verify response %" verifyResponse
-            When E is null
-                Log "@debug Verify contains error %" E
-
-            res = { success: true, message: "Done" }
-            Finish res
-
-res = { success: false, message: "Limited exceeded" }
+res = { success: false, message: "Passkey list limited exceeded" }
 Finish res
