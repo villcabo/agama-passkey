@@ -1,7 +1,7 @@
 Flow io.jans.agama.passkey.list
      Basepath ""
      Inputs userData scimSetting
-Log "@debug **=> List passkey flow started!, Inputs userData: %, scimSetting: %" userData scimSetting
+Log "@debug --> List passkey flow started! <--"
 
 inum = userData.inum
 uid = userData.uid
@@ -9,7 +9,7 @@ fidoValidator = Call io.jans.agama.passkey.authn.FidoValidator#new
 scimFido2Helper = Call io.jans.agama.passkey.ScimFido2Helper#new scimSetting
 fidoDevices = Call scimFido2Helper getFidoDeviceByUser inum
 Log "@debug Call ScimFido2Helper.getFidoDeviceByUser response %" fidoDevices
-obj = { count: fidoDevices.count, devices: fidoDevices.devices, assertion: "{}", isAssertion: false, showError: false, errorTitle: "", errorMessage: "" }
+obj = { count: fidoDevices.count, devices: fidoDevices.items, assertion: "{}", isAssertion: false, showError: false, errorTitle: "", errorMessage: "" }
 
 Repeat 50 times max
     listForm = RRF "passkey-list.ftlh" obj
@@ -23,7 +23,7 @@ Repeat 50 times max
         When addTrigger.success is true
             fidoDevices = Call scimFido2Helper getFidoDeviceByUser inum
             obj.count = fidoDevices.count
-            obj.devices = fidoDevices.devices
+            obj.devices = fidoDevices.items
 
     When listForm.loginWithPasskeyBtn is ""
         desAssertion = Call fidoValidator assertionRequest uid
@@ -31,23 +31,23 @@ Repeat 50 times max
         obj.isAssertion = true
         obj.assertion = desAssertion
 
-    When listForm.skipped is ""
+    When listForm.skipped is "skipped"
         obj.isAssertion = false
         obj.showError = true
         obj.errorTitle = "Passkey authentication failed."
         obj.errorMessage = ""
 
-    When listForm.tokenResponse is ""
+    When listForm.tokenResponse is not ""
         verifyResponse | E = Call fidoValidator verify listForm.tokenResponse
-        When E is null
+        When E is not null
             Log "@debug FidoValidator.verify is crashed: %" E
             obj.showError = true
             obj.errorTitle = "Passkey authentication failed."
-            obj.errorMessage = E
-
-        Log "@debug FidoValidator.verify is success: %" verifyResponse
-        res = { success: true, message: "Passkey authentication success" }
-        Finish res
+            obj.errorMessage = ""
+        Otherwise
+            Log "@debug FidoValidator.verify is success: %" verifyResponse
+            res = { success: true, message: "Passkey authentication success" }
+            Finish res
 
 res = { success: false, message: "Passkey list limited exceeded" }
 Finish res

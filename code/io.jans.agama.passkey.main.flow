@@ -1,7 +1,7 @@
 Flow io.jans.agama.passkey.main
      Basepath ""
      Configs conf
-Log "@debug **=> Main flow started!"
+Log "@debug --> Main flow started! <--"
 
 casaApi = Call io.jans.agama.passkey.EnrollmentHelper#new
 authService = Call io.jans.as.server.service.AuthenticationService#class
@@ -22,12 +22,14 @@ Repeat 50 times max
             userData = Call io.jans.agama.passkey.IdentityProcessor#accountFromUid authResult.uid
             Log "@debug Call accountFromUid response %" userData
             uid = userData.uid
-            aux = Trigger io.jans.agama.passkey.list userData conf
-            When aux.success is true
+            listTrigger = Trigger io.jans.agama.passkey.list userData conf
+            Log "@debug List trigger response %" listTrigger
+            When listTrigger.success is true
                 Finish uid
 
     When mainForm.loginWithPasskeyBtn is ""
         desAssertion = Call fidoValidator assertionRequest null
+        obj.showError = false
         obj.isAssertion = true
         obj.assertion = desAssertion
 

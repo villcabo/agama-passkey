@@ -3,16 +3,18 @@ package io.jans.agama.passkey.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ScimFidoDeviceResponseDTO {
+public class ScimFidoDeviceResponseDTO implements Serializable {
 
     @JsonProperty("totalResults")
     private Integer count;
 
     @JsonProperty("Resources")
-    private List<ScimFidoDeviceDTO> devices;
+    private List<ScimFidoDeviceDTO> items = new ArrayList<>();
 
     public ScimFidoDeviceResponseDTO() {
     }
@@ -25,19 +27,19 @@ public class ScimFidoDeviceResponseDTO {
         this.count = count;
     }
 
-    public List<ScimFidoDeviceDTO> getDevices() {
-        return devices;
+    public List<ScimFidoDeviceDTO> getItems() {
+        return items;
     }
 
-    public void setDevices(List<ScimFidoDeviceDTO> devices) {
-        this.devices = devices;
+    public void setItems(List<ScimFidoDeviceDTO> items) {
+        this.items = items;
     }
 
     @Override
     public String toString() {
-        return "ScimFidoDeviceDTO{" +
+        return "ScimFidoDeviceResponseDTO{" +
                 "count=" + count +
-                ", devices=" + devices +
+                ", items=" + items +
                 '}';
     }
 }

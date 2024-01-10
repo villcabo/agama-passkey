@@ -29,13 +29,13 @@
             .catch(err => {
                 console.error('Failed to webauthn create credential: ', err);
                 document.getElementById("skipped").value = "skipped";
-                document.getElementById("loginForm").submit();
+                document.forms[0].submit();
             });
     }
 
     window.addEventListener("load", (event) => {
-        const isAssertion = ${isAttestation?c};
-        if (isAssertion) {
+        const isAttestation = ${isAttestation?c};
+        if (isAttestation) {
             registerPasskey();
         }
     });

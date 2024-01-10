@@ -1,7 +1,7 @@
 Flow io.jans.agama.passkey.nickname
      Basepath ""
      Inputs key userData
-Log "@debug **=> Nickname passkey flow started!, Inputs key %, userData %" key userData
+Log "@debug --> Nickname passkey flow started! <--"
 
 inum = userData.inum
 name = userData.name
@@ -9,7 +9,8 @@ name = userData.name
 nicknameForm = RRF "nickname.ftlh"
 Log "@debug Nickname form response %" nicknameForm
 
-nickNamed = Call enroller nameIt inum nicknameForm.nickname key
+fidoEnroller = Call io.jans.agama.passkey.enroll.FidoEnroller#new
+nickNamed = Call fidoEnroller nameIt inum nicknameForm.nickname key
 When nickNamed is false
     Log "@debug Failed to set a nickname for % device" name
     res = { success: false, message: "Nickname passkey failed to save" }

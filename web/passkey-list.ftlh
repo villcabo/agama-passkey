@@ -16,12 +16,6 @@
 </head>
 <body>
 <script>
-    function setError(title, message) {
-        document.getElementById('errorTitle').value = title;
-        document.getElementById('errorMessage').value = message;
-        document.getElementById("form2").submit();
-    }
-
     function authenticationWithPasskey() {
         const request = ${assertion?no_esc}
         webauthn.getAssertion(request)
@@ -95,7 +89,7 @@
 
                     <div>
                         <ul class="w-full divide-y divide-gray-200 dark:divide-gray-700 text-left">
-                            <#list device as devices>
+                            <#list devices as device>
                                 <li class="pb-3 sm:pb-4">
                                     <div class="flex items-center space-x-4 rtl:space-x-reverse">
                                         <div class="flex-shrink-0">

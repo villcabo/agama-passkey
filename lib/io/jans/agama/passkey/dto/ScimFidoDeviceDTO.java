@@ -3,8 +3,10 @@ package io.jans.agama.passkey.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ScimFidoDeviceDTO {
+public class ScimFidoDeviceDTO implements Serializable {
 
     @JsonProperty("id")
     private String id;

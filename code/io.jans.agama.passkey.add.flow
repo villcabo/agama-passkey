@@ -1,7 +1,7 @@
 Flow io.jans.agama.passkey.add
      Basepath ""
      Inputs userData
-Log "@debug **=> Add a passkey flow started!, Inputs userData %" userData
+Log "@debug --> Add a passkey flow started! <--"
 
 inum = userData.inum
 name = userData.name
@@ -18,24 +18,26 @@ Repeat 50 times max
         obj.attestation = detestable
         obj.showError = false
 
-    When addDeviceForm.skipped is ""
+    When addDeviceForm.skipped is "skipped"
         obj.isAttestation = false
         obj.showError = true
         obj.errorTitle = "Passkey registration failed."
         obj.errorMessage = ""
 
-    When addDeviceForm.tokenResponse is ""
+    When addDeviceForm.tokenResponse is not ""
         key | E = Call fidoEnroller verifyRegistration inum obj.tokenResponse
         When E is not null
             Log "@error FidoEnroller.verifyRegistration is crashed: %" E
+            obj.isAttestation = false
             obj.showError = true
             obj.errorTitle = "Passkey registration failed."
-            obj.errorMessage = E
-
-        Log "@debug FidoEnroller.verifyRegistration is success, key %" key
-        nicknameTrigger = Trigger io.jans.agama.passkey.nickname key userData
-        Log "@debug Nickname trigger response %" nicknameTrigger
-        Finish nicknameTrigger
+            obj.errorMessage = ""
+        Otherwise
+            Log "@debug FidoEnroller.verifyRegistration is success, key %" key
+            nicknameTrigger = Trigger io.jans.agama.passkey.nickname key userData
+            Log "@debug Nickname trigger response %" nicknameTrigger
+            obj.isAttestation = false
+            Finish nicknameTrigger
 
     When addDeviceForm.cancelBtn is ""
         res = { success: false, message: "Cancel event" }
