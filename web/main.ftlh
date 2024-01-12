@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="${webCtx.contextPath}/servlet/favicon" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="base64js.js"></script>
-    <script src="base64url.js"></script>
-    <script src="webauthn.js"></script>
+    <script src="${webCtx.contextPath}/auth/fido2/js/base64js.js"></script>
+    <script src="${webCtx.contextPath}/auth/fido2/js/base64url.js"></script>
+    <script src="${webCtx.contextPath}/auth/fido2/js/webauthn.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class'
@@ -24,12 +24,12 @@
                 const assertionJson = JSON.stringify(dataObject);
                 console.log('Assertion response: ' + assertionJson);
                 document.getElementById("tokenResponse").value = assertionJson;
-                document.getElementById("loginForm").submit();
+                document.forms[0].submit();
             })
             .catch(err => {
                 console.error('Failed to webauthn get credential: ', err);
                 document.getElementById("skipped").value = "skipped";
-                document.getElementById("loginForm").submit();
+                document.forms[0].submit();
             });
     }
 

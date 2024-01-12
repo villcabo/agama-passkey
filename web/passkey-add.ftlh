@@ -18,6 +18,12 @@
 <script>
     function registerPasskey() {
         const request = ${attestation?no_esc}
+        delete request.authenticatorSelection.authenticatorAttachment;
+        request.authenticatorSelection.requireResidentKey = true;
+        request.timeout = 90000;
+        request.extensions = { credProps: true };
+
+        console.log('Attestation: ', JSON.stringify(request));
         webauthn.createCredential(request)
             .then(data => {
                 const dataObject = webauthn.responseToObject(data);

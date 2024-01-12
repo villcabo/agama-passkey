@@ -93,7 +93,7 @@ public class ScimWSBase {
     }
 
     private void refreshToken() throws IOException {
-        if (System.currentTimeMillis() < tokenExp - TOKEN_EXP_GAP) return;
+        //if (System.currentTimeMillis() < tokenExp - TOKEN_EXP_GAP) return;
 
         StringJoiner joiner = new StringJoiner("&");
         Map.of("grant_type", "client_credentials", "scope", scope)

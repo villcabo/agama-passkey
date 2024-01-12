@@ -24,12 +24,12 @@
                 const assertionJson = JSON.stringify(dataObject);
                 console.log('Assertion response: ' + assertionJson);
                 document.getElementById("tokenResponse").value = assertionJson;
-                document.getElementById("form2").submit();
+                document.forms[0].submit();
             })
             .catch(err => {
                 console.error('Failed to webauthn get credential: ', err);
                 document.getElementById("skipped").value = "skipped";
-                document.getElementById("form2").submit();
+                document.forms[0].submit();
             });
     }
 
