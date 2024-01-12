@@ -48,9 +48,9 @@
                  alt="logo">
         </div>
         <div class="w-full bg-white rounded-lg shadow-lg dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-            <#if count == 0>
-                <form method="post" enctype="application/x-www-form-urlencoded"
-                      class="p-6 space-y-4 md:space-y-6 sm:p-8 text-gray-900">
+            <form method="post" enctype="application/x-www-form-urlencoded"
+                  class="p-6 space-y-4 md:space-y-6 sm:p-8 text-gray-900">
+                <#if fidoDevice.count == 0>
                     <div class="flex items-center justify-center">
                         <svg aria-hidden="true" height="24" viewBox="0 0 24 24" version="1.1" width="24"
                              data-view-component="true" class="w-8 h-8">
@@ -79,21 +79,19 @@
                             Add a passkey
                         </button>
                     </div>
-                </form>
-            <#else>
-                <form id="form2" method="post" enctype="application/x-www-form-urlencoded"
-                      class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <#else>
                     <h1 class="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                         Your Passkeys
                     </h1>
 
                     <div>
                         <ul class="w-full divide-y divide-gray-200 dark:divide-gray-700 text-left">
-                            <#list devices as device>
+                            <#list fidoDevice.devices as device>
                                 <li class="pb-3 sm:pb-4">
                                     <div class="flex items-center space-x-4 rtl:space-x-reverse">
                                         <div class="flex-shrink-0">
-                                            <svg height="24" aria-hidden="true" viewBox="0 0 24 24" version="1.1" width="24"
+                                            <svg height="24" aria-hidden="true" viewBox="0 0 24 24" version="1.1"
+                                                 width="24"
                                                  data-view-component="true" class="w-8 h-8">
                                                 <path d="M9.496 2a5.25 5.25 0 0 0-2.519 9.857A9.006 9.006 0 0 0 .5 20.228a.751.751 0 0 0 .728.772h5.257c3.338.001 6.677.002 10.015 0a.5.5 0 0 0 .5-.5v-4.669a.95.95 0 0 0-.171-.551 9.02 9.02 0 0 0-4.814-3.423A5.25 5.25 0 0 0 9.496 2Z"></path>
                                                 <path d="M23.625 10.313c0 1.31-.672 2.464-1.691 3.134a.398.398 0 0 0-.184.33v.886a.372.372 0 0 1-.11.265l-.534.534a.188.188 0 0 0 0 .265l.534.534c.071.07.11.166.11.265v.347a.374.374 0 0 1-.11.265l-.534.534a.188.188 0 0 0 0 .265l.534.534a.37.37 0 0 1 .11.265v.431a.379.379 0 0 1-.097.253l-1.2 1.319a.781.781 0 0 1-1.156 0l-1.2-1.319a.379.379 0 0 1-.097-.253v-5.39a.398.398 0 0 0-.184-.33 3.75 3.75 0 1 1 5.809-3.134ZM21 9.75a1.125 1.125 0 1 0-2.25 0 1.125 1.125 0 0 0 2.25 0Z"></path>
@@ -145,16 +143,16 @@
                             <div class="w-full border-t border-gray-300"></div>
                         </div>
                         <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-white text-gray-500">
-                            Or
-                        </span>
+                            <span class="px-2 bg-white text-gray-500">
+                                Or
+                            </span>
                         </div>
                     </div>
 
                     <input type="hidden" id="tokenResponse" name="tokenResponse">
                     <input type="hidden" id="skipped" name="skipped">
 
-                    <#if showError == true >
+                    <#if showError == true>
                         <div id="alert-message"
                              class="p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
                              role="alert">
@@ -186,8 +184,8 @@
                             Sign in with a passkey
                         </button>
                     </div>
-                </form>
-            </#if>
+                </#if>
+            </form>
         </div>
     </div>
 </section>

@@ -10,6 +10,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScimFidoDeviceResponseDTO implements Serializable {
 
+    private static final long serialVersionUID = -3465236599853658766L;
+
     @JsonProperty("totalResults")
     private Integer count;
 

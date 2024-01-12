@@ -25,7 +25,7 @@ Repeat 50 times max
         obj.errorMessage = ""
 
     When addDeviceForm.tokenResponse is not ""
-        key | E = Call fidoEnroller verifyRegistration inum obj.tokenResponse
+        key | E = Call fidoEnroller verifyRegistration inum addDeviceForm.tokenResponse
         When E is not null
             Log "@error FidoEnroller.verifyRegistration is crashed: %" E
             obj.isAttestation = false

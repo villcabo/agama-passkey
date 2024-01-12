@@ -1,15 +1,12 @@
 package io.jans.agama.passkey;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.oauth2.sdk.http.HTTPRequest;
-import io.jans.agama.passkey.dto.ScimFidoDeviceResponseDTO;
-import net.minidev.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class ScimFido2Helper extends ScimWSBase {
 
@@ -24,7 +21,7 @@ public class ScimFido2Helper extends ScimWSBase {
         setScope(SCOPE_FIDO2_READ);
     }
 
-    public ScimFidoDeviceResponseDTO getFidoDeviceByUser(String userInum) throws IOException {
+    public Map<String, Object> getFidoDeviceByUser(String userInum) throws IOException {
         try {
             URL url = new URL(apiBase + "/v2/Fido2Devices");
             log.debug("Scim Fido2Devices url: {}", url);
@@ -35,10 +32,24 @@ public class ScimFido2Helper extends ScimWSBase {
             Map.of("userId", userInum).forEach((k, v) -> joiner.add(k + "=" + v));
             request.setQuery(joiner.toString());
 
-            JSONObject response = sendRequest(request, true, true).getContentAsJSONObject();
+            String response = sendRequest(request, true, true).getContentAsJSONObject().toJSONString();
             log.debug("Response scim fido2 devices: {}", response);
-            ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            return mapper.convertValue(response, ScimFidoDeviceResponseDTO.class);
+            JSONObject resObject = new JSONObject(response);
+            int count = resObject.getInt("totalResults");
+            List<Map<String, String>> mapList = new ArrayList<>();
+            if (count > 0) {
+                JSONArray jsonArray = resObject.getJSONArray("Resources");
+                int i = 0;
+                while (i < jsonArray.length()) {
+                    JSONObject item = jsonArray.getJSONObject(i);
+                    Map<String, String> result = new HashMap<>();
+                    result.put("displayName", item.getString("displayName"));
+                    result.put("creationDate", item.getString("creationDate"));
+                    mapList.add(result);
+                    i++;
+                }
+            }
+            return Map.of("count", count, "devices", mapList);
 
         } catch (Exception e) {
             throw new IOException("Could not obtain the user's list of fido devices: " + userInum, e);

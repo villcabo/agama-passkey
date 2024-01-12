@@ -3,7 +3,7 @@ Flow io.jans.agama.passkey.main
      Configs conf
 Log "@debug --> Main flow started! <--"
 
-casaApi = Call io.jans.agama.passkey.EnrollmentHelper#new
+//casaApi = Call io.jans.agama.passkey.EnrollmentHelper#new
 authService = Call io.jans.as.server.service.AuthenticationService#class
 cdiUtil = Call io.jans.service.cdi.util.CdiUtil#bean authService
 fidoValidator = Call io.jans.agama.passkey.authn.FidoValidator#new

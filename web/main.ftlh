@@ -93,7 +93,7 @@
                 <input type="hidden" id="tokenResponse" name="tokenResponse">
                 <input type="hidden" id="skipped" name="skipped">
 
-                <#if showError == true >
+                <#if showError == true>
                     <div id="alert-message"
                          class="p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
                          role="alert">
