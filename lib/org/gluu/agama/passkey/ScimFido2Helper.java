@@ -1,4 +1,4 @@
-package io.jans.agama.passkey;
+package org.gluu.agama.passkey;
 
 import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 import org.json.JSONArray;

@@ -1,4 +1,4 @@
-Flow io.jans.agama.passkey.nickname
+Flow org.gluu.agama.passkey.nickname
      Basepath ""
      Inputs key userData
 Log "@debug --> Nickname passkey flow started! <--"
@@ -9,7 +9,7 @@ name = userData.name
 nicknameForm = RRF "nickname.ftlh"
 Log "@debug Nickname form response %" nicknameForm
 
-fidoEnroller = Call io.jans.agama.passkey.enroll.FidoEnroller#new
+fidoEnroller = Call org.gluu.agama.passkey.enroll.FidoEnroller#new
 nickNamed = Call fidoEnroller nameIt inum nicknameForm.nickname key
 When nickNamed is false
     Log "@debug Failed to set a nickname for % device" name

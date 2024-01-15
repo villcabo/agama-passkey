@@ -1,12 +1,11 @@
-Flow io.jans.agama.passkey.main
+Flow org.gluu.agama.passkey.main
      Basepath ""
      Configs conf
 Log "@debug --> Main flow started! <--"
 
-//casaApi = Call io.jans.agama.passkey.EnrollmentHelper#new
 authService = Call io.jans.as.server.service.AuthenticationService#class
 cdiUtil = Call io.jans.service.cdi.util.CdiUtil#bean authService
-fidoValidator = Call io.jans.agama.passkey.authn.FidoValidator#new
+fidoValidator = Call org.gluu.agama.passkey.authn.FidoValidator#new
 authResult = {}
 obj = { success: true, assertion: "{}", isAssertion: false, showError: false, errorTitle: "", errorMessage: "" }
 
@@ -19,10 +18,10 @@ Repeat 50 times max
         authResult.uid = mainForm.username
         Log "@debug Call authResult response %" authResult
         When authResult.success is true
-            userData = Call io.jans.agama.passkey.IdentityProcessor#accountFromUid authResult.uid
+            userData = Call org.gluu.agama.passkey.IdentityProcessor#accountFromUid authResult.uid
             Log "@debug Call accountFromUid response %" userData
             uid = userData.uid
-            listTrigger = Trigger io.jans.agama.passkey.list userData conf
+            listTrigger = Trigger org.gluu.agama.passkey.list userData conf
             Log "@debug List trigger response %" listTrigger
             When listTrigger.success is true
                 Finish uid

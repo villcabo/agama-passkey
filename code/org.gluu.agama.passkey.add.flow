@@ -1,11 +1,11 @@
-Flow io.jans.agama.passkey.add
+Flow org.gluu.agama.passkey.add
      Basepath ""
      Inputs userData
 Log "@debug --> Add a passkey flow started! <--"
 
 inum = userData.inum
 name = userData.name
-fidoEnroller = Call io.jans.agama.passkey.enroll.FidoEnroller#new
+fidoEnroller = Call org.gluu.agama.passkey.enroll.FidoEnroller#new
 obj = { attestation: "{}", isAttestation: false, showError: false, errorTitle: "", errorMessage: "" }
 
 Repeat 50 times max
@@ -34,7 +34,7 @@ Repeat 50 times max
             obj.errorMessage = ""
         Otherwise
             Log "@debug FidoEnroller.verifyRegistration is success, key %" key
-            nicknameTrigger = Trigger io.jans.agama.passkey.nickname key userData
+            nicknameTrigger = Trigger org.gluu.agama.passkey.nickname key userData
             Log "@debug Nickname trigger response %" nicknameTrigger
             obj.isAttestation = false
             Finish nicknameTrigger

@@ -1,12 +1,12 @@
-Flow io.jans.agama.passkey.list
+Flow org.gluu.agama.passkey.list
      Basepath ""
      Inputs userData scimSetting
 Log "@debug --> List passkey flow started! <--"
 
 inum = userData.inum
 uid = userData.uid
-fidoValidator = Call io.jans.agama.passkey.authn.FidoValidator#new
-scimFido2Helper = Call io.jans.agama.passkey.ScimFido2Helper#new scimSetting
+fidoValidator = Call org.gluu.agama.passkey.authn.FidoValidator#new
+scimFido2Helper = Call org.gluu.agama.passkey.ScimFido2Helper#new scimSetting
 fidoDevice = Call scimFido2Helper getFidoDeviceByUser inum
 obj = { fidoDevice: fidoDevice, assertion: "{}", isAssertion: false, showError: false, errorTitle: "", errorMessage: "" }
 
@@ -15,7 +15,7 @@ Repeat 50 times max
     Log "@debug List passkey form response %" listForm
 
     When listForm.addAPasskeyBtn is ""
-        addTrigger = Trigger io.jans.agama.passkey.add userData
+        addTrigger = Trigger org.gluu.agama.passkey.add userData
         Log "@debug Add passkey trigger response %" addTrigger
         obj.showError = false
         obj.isAssertion = false
