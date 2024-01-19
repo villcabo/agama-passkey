@@ -22,7 +22,7 @@ Repeat 50 times max
         obj.isAttestation = false
         obj.showError = true
         obj.errorTitle = "Passkey registration failed."
-        obj.errorMessage = ""
+        obj.errorMessage = addDeviceForm.errorMessage
 
     When addDeviceForm.tokenResponse is not ""
         key | E = Call fidoEnroller verifyRegistration inum addDeviceForm.tokenResponse
@@ -31,7 +31,7 @@ Repeat 50 times max
             obj.isAttestation = false
             obj.showError = true
             obj.errorTitle = "Passkey registration failed."
-            obj.errorMessage = ""
+            obj.errorMessage = E.message
         Otherwise
             Log "@debug FidoEnroller.verifyRegistration is success, key %" key
             nicknameTrigger = Trigger org.gluu.agama.passkey.nickname key userData

@@ -32,7 +32,7 @@ Repeat 50 times max
         obj.isAssertion = false
         obj.showError = true
         obj.errorTitle = "Passkey authentication failed."
-        obj.errorMessage = ""
+        obj.errorMessage = listForm.errorMessage
 
     When listForm.tokenResponse is not ""
         When listForm.tokenResponse is not null
@@ -41,7 +41,7 @@ Repeat 50 times max
                 Log "@debug FidoValidator.verify is crashed: %" E
                 obj.showError = true
                 obj.errorTitle = "Passkey authentication failed."
-                obj.errorMessage = ""
+                obj.errorMessage = E.message
             Otherwise
                 Log "@debug FidoValidator.verify is success: %" verifyResponse
                 res = { success: true, message: "Passkey authentication success" }

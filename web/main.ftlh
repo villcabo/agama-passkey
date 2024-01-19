@@ -28,6 +28,13 @@
             })
             .catch(err => {
                 console.error('Failed to webauthn get credential: ', err);
+                if (err.name === "NotAllowedError") {
+                    document.getElementById('errorMessage').value = 'The operation either timed out or was not allowed.';
+                } else if (err.message) {
+                    document.getElementById('errorMessage').value = err.message;
+                } else {
+                    document.getElementById('errorMessage').value = 'Unknown message';
+                }
                 document.getElementById("skipped").value = "skipped";
                 document.forms[0].submit();
             });
@@ -92,6 +99,7 @@
 
                 <input type="hidden" id="tokenResponse" name="tokenResponse">
                 <input type="hidden" id="skipped" name="skipped">
+                <input type="hidden" id="errorMessage" name="errorMessage">
 
                 <#if showError == true>
                     <div id="alert-message"
@@ -104,17 +112,21 @@
                             </svg>
                             <span class="sr-only">Info</span>
                             <h3 class="text-lg font-medium">${errorTitle}</h3>
+                            <button type="button"
+                                    onclick="document.getElementById('alert-message').style.display = 'none'"
+                                    class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700"
+                                    data-dismiss-target="#alert-border-2" aria-label="Close">
+                                <span class="sr-only">Dismiss</span>
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                     fill="none"
+                                     viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                </svg>
+                            </button>
                         </div>
                         <div class="mt-2 mb-4 text-sm">
                             ${errorMessage}
-                        </div>
-                        <div class="flex">
-                            <button type="button"
-                                    onclick="document.getElementById('alert-message').style.display = 'none'"
-                                    class="text-red-800 bg-transparent border border-red-800 hover:bg-red-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:hover:bg-red-600 dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800"
-                                    aria-label="Close">
-                                Dismiss
-                            </button>
                         </div>
                     </div>
                 </#if>

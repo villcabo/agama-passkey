@@ -38,7 +38,7 @@ Repeat 50 times max
             Log "@error FidoValidator.verify is crashed: %" E
             obj.showError = true
             obj.errorTitle = "Passkey authentication failed."
-            obj.errorMessage = E
+            obj.errorMessage = E.message
 
         Log "@debug FidoValidator.verify is success %" verifyResponse
         Finish verifyResponse
@@ -47,7 +47,7 @@ Repeat 50 times max
         obj.isAssertion = false
         obj.showError = true
         obj.errorTitle = "Passkey authentication failed."
-        obj.errorMessage = ""
+        obj.errorMessage = mainForm.errorMessage
 
 res = { success: false, error: "Login attempt exceeded." }
 Finish res
