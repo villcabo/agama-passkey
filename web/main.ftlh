@@ -18,6 +18,7 @@
 <script>
     function authenticationWithPasskey() {
         const request = ${assertion?no_esc}
+        console.log('Assertion request: ' + JSON.stringify(request));
         webauthn.getAssertion(request)
             .then(data => {
                 const dataObject = webauthn.responseToObject(data);

@@ -15,7 +15,7 @@ public class FidoValidator {
 
     private static final Logger logger = LoggerFactory.getLogger(FidoValidator.class);
 
-    private String metadataConfiguration;
+    private final String metadataConfiguration;
 
     public FidoValidator() throws IOException {
         logger.debug("Inspecting fido2 configuration discovery URL");
@@ -44,7 +44,7 @@ public class FidoValidator {
             content = JSONObject.toJSONString(Map.of("timeout", 90000, "username", uid));
         }
 
-        try (Response response = assertionService.authenticate(content)) {
+        try (Response response = (uid == null ? assertionService.generateAuthenticate(content) : assertionService.authenticate(content))) {
             content = response.readEntity(String.class);
             int status = response.getStatus();
 
@@ -64,9 +64,13 @@ public class FidoValidator {
         Response response = assertionService.verify(tokenResponse);
         int status = response.getStatus();
         if (status != Response.Status.OK.getStatusCode()) {
-            String msg = "Verification step failed (code: " + status + ")";
-            logger.error(msg);
-            throw new IOException(msg);
+            org.json.JSONObject jsonNode = new org.json.JSONObject(response.readEntity(String.class));
+            StringBuilder sb = new StringBuilder(String.format("Verification step failed, status: %s", status));
+            if (jsonNode.has("error_description")) {
+                sb.append(String.format(", description: %s", jsonNode.getString("error_description")));
+            }
+            logger.error(sb.toString());
+            throw new IOException(sb.toString());
         }
 
         String resString = response.readEntity(String.class);

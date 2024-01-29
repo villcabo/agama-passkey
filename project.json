@@ -7,12 +7,12 @@
   "license": "apache-2.0",
   "configs": {
     "org.gluu.agama.passkey.main": {
-      "scimClientId": "d5cfc2c8-b9eb-401d-b28d-2c69b0de8609",
-      "scimClientSecret": "087484bf-faf9-4ca2-ae8b-262ecb85e368"
+      "scimClientId": "8e97bab4-f691-4056-8055-8abad7c7ee65",
+      "scimClientSecret": "8b8b32d0-0cf3-45aa-88f6-973ffbcb4a99"
     }
   },
   "org.gluu.agama.passkey.main": {
-    "scimClientId": "d5cfc2c8-b9eb-401d-b28d-2c69b0de8609",
-    "scimClientSecret": "087484bf-faf9-4ca2-ae8b-262ecb85e368"
+    "scimClientId": "8e97bab4-f691-4056-8055-8abad7c7ee65",
+    "scimClientSecret": "8b8b32d0-0cf3-45aa-88f6-973ffbcb4a99"
   }
 }

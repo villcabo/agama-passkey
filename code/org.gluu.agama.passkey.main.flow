@@ -36,12 +36,13 @@ Repeat 50 times max
         verifyResponse | E = Call fidoValidator verify mainForm.tokenResponse
         When E is not null
             Log "@error FidoValidator.verify is crashed: %" E
+            obj.isAssertion = false
             obj.showError = true
             obj.errorTitle = "Passkey authentication failed."
             obj.errorMessage = E.message
-
-        Log "@debug FidoValidator.verify is success %" verifyResponse
-        Finish verifyResponse
+        Otherwise
+            Log "@debug FidoValidator.verify is success %" verifyResponse
+            Finish verifyResponse
 
     When mainForm.skipped is "skipped"
         obj.isAssertion = false

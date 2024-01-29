@@ -19,7 +19,6 @@
     function authenticationWithPasskey() {
         const request = ${assertion?no_esc}
         // delete request.allowCredentials;
-        request.timeout = 90000;
         console.log('Assertion request: ' + JSON.stringify(request));
         webauthn.getAssertion(request)
             .then(data => {
