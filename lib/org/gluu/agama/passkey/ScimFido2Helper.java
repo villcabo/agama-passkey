@@ -43,7 +43,7 @@ public class ScimFido2Helper extends ScimWSBase {
                 while (i < jsonArray.length()) {
                     JSONObject item = jsonArray.getJSONObject(i);
                     Map<String, String> result = new HashMap<>();
-                    result.put("displayName", item.getString("displayName"));
+                    result.put("displayName", item.has("displayName") ? item.getString("displayName") : "Registered without name");
                     result.put("creationDate", item.getString("creationDate"));
                     mapList.add(result);
                     i++;
