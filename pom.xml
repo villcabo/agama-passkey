@@ -32,11 +32,11 @@
             <artifactId>casa-config</artifactId>
             <version>${jans.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.jans</groupId>
-            <artifactId>agama-inbound</artifactId>
-            <version>${jans.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.jans</groupId>-->
+<!--            <artifactId>agama-inbound</artifactId>-->
+<!--            <version>${jans.version}</version>-->
+<!--        </dependency>-->
         <!-- Log4j2 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
